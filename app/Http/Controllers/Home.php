@@ -691,76 +691,49 @@ public function kasir()
         return redirect()->route('login');
     }
 }
+public function cekMembership(Request $request)
+{
+    $kode_membership = $request->kode_membership;
 
-// public function cekVoucher(Request $request)
-// {
-//     // Ambil kode voucher dari request POST
-//     $kodeVoucher = $request->input('kode_voucher');
-    
-//     // Validasi input, pastikan kode voucher tidak kosong
-//     if (empty($kodeVoucher)) {
-//         return response()->json([
-//             'status' => 'invalid',
-//             'message' => 'Kode voucher tidak boleh kosong',
-//         ]);
-//     }
+    $membership = DB::table('tb_member')
+        ->where('kode_member', $kode_membership)
+        ->where('expired_member', '>', now())
+        ->first();
 
-//     // Cek voucher pada database
-//     $voucherModel = new M_resto();
-//         $voucher = $voucherModel->where('kode_voucher', $kodeVoucher)
-//                                 ->where('voucher_expired >=', date('Y-m-d'))
-//                                 ->first();
+    if ($membership) {
+        return response()->json([
+            'status' => 'valid',
+            'diskon' => 10
+        ]);
+    }
 
-
-//     // $voucher = Voucher::where('kode_voucher', $kodeVoucher)
-//     //                   ->where('voucher_expired', '>=', now()) // Pastikan voucher belum expired
-//     //                   ->first();
-
-//     // Jika voucher ditemukan
-//     if ($voucher) {
-//         return response()->json([
-//             'status' => 'valid',
-//             'diskon' => $voucher->diskon, // Asumsi diskon adalah dalam bentuk persen
-//         ]);
-//     } else {
-//         return response()->json([
-//             'status' => 'invalid',
-//             'message' => 'Voucher tidak valid atau telah expired',
-//         ]);
-//     }
-// }
+    return response()->json([
+        'status' => 'invalid',
+        'message' => 'Kode membership tidak valid atau telah expired.'
+    ]);
+}
 
 public function cekVoucher(Request $request)
 {
-    // Ambil kode voucher dari request POST
-    $kodeVoucher = $request->input('kode_voucher');
-    
-    // Validasi input, pastikan kode voucher tidak kosong
-    if (empty($kodeVoucher)) {
-        return response()->json([
-            'status' => 'invalid',
-            'message' => 'Kode voucher tidak boleh kosong',
-        ]);
-    }
+    $kode_voucher = $request->kode_voucher;
 
-    // Cek voucher pada database
-    $voucherModel = new M_resto();
-    $voucher = $voucherModel->where('kode_voucher', $kodeVoucher)
-                        ->where('voucher_expired', '>=', date('Y-m-d'))
-                        ->first();
-dd($voucher);
+    $voucher = DB::table('tb_voucher')
+        ->where('kode_voucher', $kode_voucher)
+        ->where('voucher_expired', '>', now())
+        ->first();
 
-    // Jika voucher ditemukan
     if ($voucher) {
         return response()->json([
             'status' => 'valid',
-            'diskon' => $voucher->diskon, // Asumsi diskon dalam bentuk persen
-        ]);
-    } else {
-        return response()->json([
-            'status' => 'invalid',
-            'message' => 'Voucher tidak valid atau telah expired',
+            'diskon' => (float) $voucher->diskon
         ]);
     }
+
+    return response()->json([
+        'status' => 'invalid',
+        'message' => 'Voucher tidak valid atau telah expired.'
+    ]);
 }
+
+
     }

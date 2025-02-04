@@ -45,6 +45,11 @@ class M_resto extends Model
         return DB::table($this->table)->insert($data); 
     }
 
+    public function tambah2($table, $data)
+{
+    return $this->db->table($table)->insert($data);
+}
+
     public function getWhere($table, $where)
 {
     return DB::table($table)->where($where)->first();

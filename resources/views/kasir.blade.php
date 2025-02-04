@@ -37,131 +37,194 @@
 
             <!-- Panel Daftar Pesanan Kanan -->
             <div class="col-md-6">
-    <h4>Daftar Pesanan</h4>
-    <table class="table table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                <th>No</th>
-                <th>Nama Menu</th>
-                <th>Jumlah</th>
-                <th>Subtotal</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody class="order-list"></tbody>
-    </table>
+                <h4>Daftar Pesanan</h4>
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Menu</th>
+                            <th>Jumlah</th>
+                            <th>Subtotal</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="order-list"></tbody>
+                </table>
 
-    <!-- Input untuk Kode Membership dan Kode Voucher -->
-    <div class="mt-3">
-        <div class="form-group">
-            <label for="kode-membership">Kode Membership</label>
-            <input type="text" class="form-control" id="kode-membership" placeholder="Masukkan Kode Membership">
-        </div>
-        <div class="form-group">
-            <label for="kode-voucher">Kode Voucher</label>
-            <input type="text" class="form-control" id="kode-voucher" placeholder="Masukkan Kode Voucher">
-        </div>
-    </div>
+                <!-- Input untuk Kode Membership dan Kode Voucher -->
+                <div class="mt-3">
+                    <div class="form-group">
+                        <label for="kode-membership">Kode Membership</label>
+                        <input type="text" class="form-control" id="kode-membership" placeholder="Masukkan Kode Membership">
+                    </div>
+                    <div class="form-group">
+                        <label for="kode-voucher">Kode Voucher</label>
+                        <input type="text" class="form-control" id="kode-voucher" placeholder="Masukkan Kode Voucher">
+                    </div>
+                </div>
 
-    <h5 class="mt-2">Diskon: <span id="diskon-harga">Rp 0</span></h5>
+                <h5 class="mt-2">Diskon: <span id="diskon-harga">Rp 0</span></h5>
 
-    <!-- Total Harga -->
-    <h5 class="mt-3">Total: <span id="total-harga">Rp 0</span></h5>
+                <!-- Total Harga -->
+                <h5 class="mt-3">Total: <span id="total-harga">Rp 0</span></h5>
 
-    <!-- Tombol Bayar -->
-    <button class="btn btn-success mt-2" id="btn-bayar">Bayar</button>
+                <!-- Input Harga Pembayaran -->
+<div class="form-group mt-3">
+    <label for="input-harga">Jumlah Pembayaran</label>
+    <input type="number" class="form-control" id="input-harga" placeholder="Masukkan jumlah uang">
 </div>
 
+<!-- Kembalian -->
+<h5 class="mt-2">Kembalian: <span id="kembalian-harga">Rp 0</span></h5>
+
+                <!-- Tombol Bayar -->
+                <button class="btn btn-success mt-2" id="btn-bayar">Bayar</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let daftarPesanan = [];
 
-        $(document).on('click', '.btn-tambah', function () {
-            let id = $(this).closest('.menu-card').data('id');
-            let nama = $(this).closest('.menu-card').data('nama');
-            let harga = parseInt($(this).closest('.menu-card').data('harga'));
+$(document).on('input', '#input-harga', function() {
+    hitungKembalian();
+});
 
-            let item = daftarPesanan.find(p => p.id === id);
-            if (item) {
-                item.jumlah++;
-            } else {
-                daftarPesanan.push({ id, nama, harga, jumlah: 1 });
-            }
+$(document).on('click', '#btn-bayar', function() {
+    let bayar = parseInt($('#input-harga').val());
+    let total = parseInt($('#total-harga').text().replace(/\D/g, ''));
 
-            updatePesanan();
-        });
-
-        $(document).on('click', '.btn-hapus', function () {
-            let id = $(this).data('id');
-            daftarPesanan = daftarPesanan.filter(p => p.id !== id);
-            updatePesanan();
-        });
-
-        function updatePesanan() {
-            let orderList = $('.order-list');
-            orderList.empty();
-            let total = 0;
-
-            daftarPesanan.forEach((item, index) => {
-                total += item.harga * item.jumlah;
-                orderList.append(`
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${item.nama}</td>
-                        <td>${item.jumlah}</td>
-                        <td>Rp ${new Intl.NumberFormat().format(item.harga * item.jumlah)}</td>
-                        <td><button class="btn btn-danger btn-sm btn-hapus" data-id="${item.id}">Hapus</button></td>
-                    </tr>
-                `);
-            });
-
-            $('#total-harga').text(`Rp ${new Intl.NumberFormat().format(total)}`);
-        }
-
-        // Fungsi untuk verifikasi voucher dan mengupdate total harga
-        $(document).on('click', '#btn-bayar', function() {
-    let kodeVoucher = $('#kode-voucher').val();
-
-    if (kodeVoucher.trim() === "") {
-        alert("Masukkan kode voucher terlebih dahulu.");
+    if (isNaN(bayar) || bayar < total) {
+        alert('Jumlah pembayaran tidak cukup!');
         return;
     }
 
-    $.ajax({
-        url: "cekVoucher", // Pastikan URL ini sesuai dengan route di Laravel
-        method: 'POST',
-        data: {
-            kode_voucher: kodeVoucher,
-            _token: $('meta[name="csrf-token"]').attr('content') // Pastikan ada <meta> untuk CSRF
-        },
-        success: function(response) {
-            if (response.status === 'valid') {
-                let diskon = parseFloat(response.diskon);
-                let totalHarga = hitungTotalHarga();
-                let totalSetelahDiskon = totalHarga - (totalHarga * (diskon / 100));
-
-                $('#total-harga').text('Rp ' + new Intl.NumberFormat().format(totalSetelahDiskon));
-                $('#diskon-harga').text('Rp ' + new Intl.NumberFormat().format(totalHarga * (diskon / 100)));
-            } else {
-                alert(response.message || 'Voucher tidak valid atau telah expired');
-            }
-        },
-        error: function() {
-            alert('Terjadi kesalahan saat memverifikasi voucher');
-        }
-    });
+    hitungKembalian();
+    alert('Pembayaran berhasil!');
 });
 
+function hitungKembalian() {
+    let bayar = parseInt($('#input-harga').val());
+    let total = parseInt($('#total-harga').text().replace(/\D/g, ''));
 
-function hitungTotalHarga() {
-    let total = 0;
-    daftarPesanan.forEach(item => {
-        total += item.harga * item.jumlah;
-    });
-    return total;
+    if (!isNaN(bayar) && bayar >= total) {
+        let kembalian = bayar - total;
+        $('#kembalian-harga').text(`Rp ${new Intl.NumberFormat().format(kembalian)}`);
+    } else {
+        $('#kembalian-harga').text('Rp 0');
+    }
 }
-    </script>
+
+    let daftarPesanan = [];
+    let totalHarga = 0;
+    let diskonMembership = 0;
+    let diskonVoucher = 0;
+
+    $(document).on('click', '.btn-tambah', function () {
+        let id = $(this).closest('.menu-card').data('id');
+        let nama = $(this).closest('.menu-card').data('nama');
+        let harga = parseInt($(this).closest('.menu-card').data('harga'));
+
+        let item = daftarPesanan.find(p => p.id === id);
+        if (item) {
+            item.jumlah++;
+        } else {
+            daftarPesanan.push({ id, nama, harga, jumlah: 1 });
+        }
+
+        updatePesanan();
+    });
+
+    $(document).on('click', '.btn-hapus', function () {
+        let id = $(this).data('id');
+        daftarPesanan = daftarPesanan.filter(p => p.id !== id);
+        updatePesanan();
+    });
+
+    function updatePesanan() {
+        let orderList = $('.order-list');
+        orderList.empty();
+        totalHarga = 0;
+
+        daftarPesanan.forEach((item, index) => {
+            totalHarga += item.harga * item.jumlah;
+            orderList.append(`
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.nama}</td>
+                    <td>${item.jumlah}</td>
+                    <td>Rp ${new Intl.NumberFormat().format(item.harga * item.jumlah)}</td>
+                    <td><button class="btn btn-danger btn-sm btn-hapus" data-id="${item.id}">Hapus</button></td>
+                </tr>
+            `);
+        });
+
+        hitungTotalHarga();
+    }
+
+    function hitungTotalHarga() {
+        let totalSetelahDiskon = totalHarga;
+        
+        if (diskonMembership > 0) {
+            totalSetelahDiskon -= (totalHarga * (diskonMembership / 100));
+        }
+        if (diskonVoucher > 0) {
+            totalSetelahDiskon -= (totalHarga * (diskonVoucher / 100));
+        }
+
+        $('#diskon-harga').text(`Rp ${new Intl.NumberFormat().format(totalHarga - totalSetelahDiskon)}`);
+        $('#total-harga').text(`Rp ${new Intl.NumberFormat().format(totalSetelahDiskon)}`);
+    }
+
+    // Cek Membership
+    $(document).on('blur', '#kode-membership', function() {
+        let kodeMembership = $(this).val();
+
+        if (kodeMembership.trim() === "") return;
+
+        $.ajax({
+            url: "{{ url('cekMembership') }}",
+            method: 'POST',
+            data: {
+                kode_membership: kodeMembership,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                diskonMembership = response.status === 'valid' ? response.diskon : 0;
+                hitungTotalHarga();
+            },
+            error: function() {
+                alert('Terjadi kesalahan saat memverifikasi membership');
+            }
+        });
+    });
+
+    // Cek Voucher otomatis saat diketik
+    $(document).on('input', '#kode-voucher', function() {
+        let kodeVoucher = $(this).val();
+
+        if (kodeVoucher.trim() === "") {
+            diskonVoucher = 0;
+            hitungTotalHarga();
+            return;
+        }
+
+        $.ajax({
+            url: "{{ url('cekVoucher') }}",
+            method: 'POST',
+            data: {
+                kode_voucher: kodeVoucher,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                diskonVoucher = response.status === 'valid' ? response.diskon : 0;
+                hitungTotalHarga();
+            },
+            error: function() {
+                alert('Terjadi kesalahan saat memverifikasi voucher');
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

@@ -82,6 +82,8 @@ Route::post('home/aksi_t_menu', [Home::class, 'aksi_t_menu'])->name('aksi_t_menu
 
 Route::post('home/aksi_e_menu', [Home::class, 'aksi_e_menu'])->name('aksi_e_menu');
 
-Route::post('home/checkMembership', [Home::class, 'checkMembership'])->name('checkMembership');
+Route::post('/cekMembership', [Home::class, 'cekMembership']);
 
-Route::post('home/cekVoucher', [Home::class, 'cekVoucher'])->name('cekVoucher');
+Route::post('/cekVoucher', [Home::class, 'cekVoucher']);
+
+Route::post('/simpanTransaksi', [Home::class, 'simpanTransaksi']);
