@@ -5,10 +5,10 @@
             <div class="section-header-back">
                 <a href="{{ url ('home/dashboard') }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
             </div>
-            <h1>Data User</h1>
+            <h1>Data Member</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ url ('home/dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item active"><a href="{{ url ('home/user') }}">Data User</a></div>
+                <div class="breadcrumb-item active"><a href="{{ url ('home/member') }}">Data Member</a></div>
             </div>
         </div>
 
@@ -16,12 +16,12 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h4>Data User</h4>
+                        <h4>Data Member</h4>
                     </div>
                     <div>
 
                      <!-- Button to Open the Modal for Adding Kelas -->
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#tambahKelasModal">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#tambahMemberModal">
                             <i class="fas fa-plus"></i> Tambah
                         </button>
                     </div>
@@ -37,9 +37,9 @@
                             <thead>
                                 <tr>
                                     <th scope="col">No</th>
-                                    <th scope="col">Username</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Level</th>
+                                    <th scope="col">Nama</th>
+                                    <th scope="col">Kode</th>
+                                    <th scope="col">Expired</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
@@ -50,31 +50,23 @@
                                 ?>                          
                                     <tr>
                                         <td><?= $no++ ?></td>
-                                        <td><?= $wkwk->username?></td>
-                                        <td><?= $wkwk->email?></td>
-                                        <td>
-                                            <?php
-                                                if ($wkwk->id_level == 1) {
-                                                    echo "Admin";
-                                                } else if ($wkwk->id_level == 2) {
-                                                    echo "Karyawan";
-                                                }
-                                            ?>
-                                        </td>
+                                        <td><?= $wkwk->nama_member?></td>
+                                        <td><?= $wkwk->kode_member?></td>
+                                        <td><?= $wkwk->expired_member?></td>
                                         <!--  -->
                                         <td>
                                             <button type="button" 
                                                     class="btn btn-primary btn-action btn-action-edit mr-1" 
                                                     data-toggle="tooltip" 
                                                     title="Edit"
-                                                    data-id_user="<?= $wkwk->id_user ?>"
-                                                    data-username="<?= $wkwk->username ?>"
-                                                    data-email="<?= $wkwk->email ?>"
-                                                    data-level="<?= $wkwk->id_level ?>"> <!-- Tambahkan ini -->
+                                                    data-id_member="<?= $wkwk->id_member ?>"
+                                                    data-nama_member="<?= $wkwk->nama_member ?>"
+                                                    data-kode_member="<?= $wkwk->kode_member ?>"
+                                                    data-expired_member="<?= $wkwk->expired_member ?>"> <!-- Tambahkan ini -->
                                                 <i class="fas fa-pencil-alt"></i>
                                             </button>
                                            
-                                            <a href="{{ route ('hapus_user',$wkwk->id_user) }}" 
+                                            <a href="{{ route ('hapus_member',$wkwk->id_member) }}" 
                                                 class="btn btn-danger btn-action" 
                                                 data-toggle="tooltip" 
                                                 title="Delete">
@@ -96,32 +88,29 @@
 </div>
 
 <!-- Modal Tambah User -->
-<div class="modal fade" id="tambahKelasModal" tabindex="-1" role="dialog" aria-labelledby="tambahKelasModalLabel" aria-hidden="true">
+<div class="modal fade" id="tambahMemberModal" tabindex="-1" role="dialog" aria-labelledby="tambahMemberModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="tambahKelasModalLabel">Tambah User</h5>
+                <h5 class="modal-title" id="tambahMemberModalLabel">Tambah Member</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="tambahUserForm" action="{{ route ('aksi_t_user') }}" method="POST">
+            <form id="tambahMemberForm" action="{{ route ('aksi_t_member') }}" method="POST">
             @csrf
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="tambahUsername">Username</label>
-                        <input type="text" class="form-control" id="tambahUsername" name="username" required>
+                        <label for="tambahNamaMember">Nama Member</label>
+                        <input type="text" class="form-control" id="tambahNamaMember" name="nama_member" required>
                     </div>
                     <div class="form-group">
-                        <label for="tambahEmail">Email</label>
-                        <input type="email" class="form-control" id="tambahEmail" name="email" required>
+                        <label for="tambahKodeMember">Kode Member</label>
+                        <input type="text" class="form-control" id="tambahKodeMember" name="kode_member" required>
                     </div>
                     <div class="form-group">
-                        <label for="tambahLevel">Level</label>
-                        <select class="form-control" id="tambahLevel" name="id_level" required>
-                            <option value="1">Admin</option>
-                            <option value="2">Karyawan</option>
-                        </select>
+                        <label for="tambahExpiredMember">Expired Member</label>
+                        <input type="date" class="form-control" id="tambahExpiredMember" name="expired_member" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -134,45 +123,31 @@
 </div>
 
 <!-- Modal Edit User -->
-<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+<div class="modal fade" id="editMemberModal" tabindex="-1" role="dialog" aria-labelledby="editMemberModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                <h5 class="modal-title" id="editMemberModalLabel">Edit Member</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="editUserForm" action="{{ route ('aksi_e_user') }}" method="POST">
+            <form id="editMemberForm" action="{{ route ('aksi_e_member') }}" method="POST">
             @csrf
                 <div class="modal-body">
-                    <input type="hidden" name="id_user" id="editIdUser">
+                    <input type="hidden" name="id_member" id="editIdMember">
                     <div class="form-group">
-                        <label for="editUsername">Username</label>
-                        <input type="text" class="form-control" id="editUsername" name="username" required>
+                        <label for="editNamaMember">Nama Member</label>
+                        <input type="text" class="form-control" id="editNamaMember" name="nama_member" required>
                     </div>
                     <div class="form-group">
-                        <label for="editEmail">Email</label>
-                        <input type="email" class="form-control" id="editEmail" name="email" required>
+                        <label for="editKodeMember">Kode Member</label>
+                        <input type="text" class="form-control" id="editKodeMember" name="kode_member" required>
                     </div>
                     <div class="form-group">
-                        <label for="editLevel">Level</label>
-                        <select class="form-control" id="editLevel" name="id_level" required>
-                            <option value="1">Admin</option>
-                            <option value="2">Kepala Sekolah</option>
-                        </select>
+                        <label for="editExpiredMember">Expired Member</label>
+                        <input type="date" class="form-control" id="editExpiredMember" name="expired_member" required>
                     </div>
-                    <!-- <div class="form-group">
-                        <label for="editNotelp">No Telepon</label>
-                        <input type="text" class="form-control" id="editNotelp" name="no_telp" required>
-                    </div> -->
-                    <!-- <div class="form-group">
-                        <label for="editJk">Jenis Kelamin</label>
-                        <select class="form-control" id="editJk" name="jk" required>
-                            <option value="L">Laki-laki</option>
-                            <option value="P">Perempuan</option>
-                        </select>
-                    </div> -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -188,19 +163,19 @@
     $(document).ready(function() {
         $('.btn-action-edit').on('click', function() {
             // Ambil data dari atribut data-* di baris tabel
-            var id_user = $(this).data('id_user');
-            var username = $(this).data('username');
-            var email = $(this).data('email');
-            var level = $(this).data('level');
+            var id_member = $(this).data('id_member');
+            var nama_member = $(this).data('nama_member');
+            var kode_member = $(this).data('kode_member');
+            var expired_member = $(this).data('expired_member');
 
             // Isi form modal dengan data tersebut
-            $('#editIdUser').val(id_user);
-            $('#editUsername').val(username);
-            $('#editEmail').val(email);
-            $('#editLevel').val(level);
+            $('#editIdMember').val(id_member);
+            $('#editNamaMember').val(nama_member);
+            $('#editKodeMember').val(kode_member);
+            $('#editExpiredMember').val(expired_member);
 
             // Tampilkan modal
-            $('#editUserModal').modal('show');
+            $('#editMemberModal').modal('show');
         });
 
         // Filter table function

@@ -38,6 +38,21 @@ Route::post('home/editfoto', [Home::class, 'editfoto'])->name('editfoto');
 
 Route::get('home/user',  [Home::class, 'user'])->name('user');
 
+Route::get('home/hapus_user/{id}', [Home::class, 'hapus_user'])->name('hapus_user');
+
+Route::get('home/member',  [Home::class, 'member'])->name('member');
+
+Route::get('home/hapus_member/{id}', [Home::class, 'hapus_member'])->name('hapus_member');
+
+Route::get('home/voucher',  [Home::class, 'voucher'])->name('voucher');
+
+Route::get('home/hapus_voucher/{id}', [Home::class, 'hapus_voucher'])->name('hapus_voucher');
+
+Route::get('home/menu_kfc',  [Home::class, 'menu_kfc'])->name('menu_kfc');
+
+Route::get('home/hapus_menu_kfc/{id}', [Home::class, 'hapus_menu_kfc'])->name('hapus_menu_kfc');
+
+Route::get('home/kasir',  [Home::class, 'kasir'])->name('kasir');
 
 //aksi
 
@@ -50,3 +65,23 @@ Route::post('home/editfoto', [Home::class, 'editfoto'])->name('editfoto');
 Route::post('home/aksi_e_profile', [Home::class, 'aksi_e_profile'])->name('aksi_e_profile');
 
 Route::post('home/aksi_changepass', [Home::class, 'aksi_changepass'])->name('aksi_changepass');
+
+Route::post('home/aksi_t_user', [Home::class, 'aksi_t_user'])->name('aksi_t_user');
+
+Route::post('home/aksi_e_user', [Home::class, 'aksi_e_user'])->name('aksi_e_user');
+
+Route::post('home/aksi_t_member', [Home::class, 'aksi_t_member'])->name('aksi_t_member');
+
+Route::post('home/aksi_e_member', [Home::class, 'aksi_e_member'])->name('aksi_e_member');
+
+Route::post('home/aksi_t_voucher', [Home::class, 'aksi_t_voucher'])->name('aksi_t_voucher');
+
+Route::post('home/aksi_e_voucher', [Home::class, 'aksi_e_voucher'])->name('aksi_e_voucher');
+
+Route::post('home/aksi_t_menu', [Home::class, 'aksi_t_menu'])->name('aksi_t_menu');
+
+Route::post('home/aksi_e_menu', [Home::class, 'aksi_e_menu'])->name('aksi_e_menu');
+
+Route::post('home/checkMembership', [Home::class, 'checkMembership'])->name('checkMembership');
+
+Route::post('home/cekVoucher', [Home::class, 'cekVoucher'])->name('cekVoucher');

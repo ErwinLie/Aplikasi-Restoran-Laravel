@@ -257,7 +257,11 @@
 
             <!-- <li><a class="nav-link" href="{{ url ('home/surat_keterlambatan_hadir') }}"><i class="fas fa-fire"></i> <span>Pengumuman</span></a></li> -->
 
+            <li><a class="nav-link" href="{{ url ('home/kasir') }}"><i class="fas fa-fire"></i> <span>Kasir</span></a></li>
+
             <li><a class="nav-link" href="{{ url ('home/member') }}"><i class="fas fa-fire"></i> <span>Member</span></a></li>
+
+            <li><a class="nav-link" href="{{ url ('home/menu_kfc') }}"><i class="fas fa-fire"></i> <span>Menu</span></a></li>
 
             <li><a class="nav-link" href="{{ url ('home/voucher') }}"><i class="fas fa-fire"></i> <span>Voucher</span></a></li>
 

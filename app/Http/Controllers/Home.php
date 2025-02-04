@@ -271,13 +271,13 @@ public function user()
         $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
 
         // Panggil model dan gunakan method tampil untuk mengambil data dari tb_event
-        $wkwk = $model->tampil('tb_user');
+        $erwin = $model->tampil('tb_user');
 
         // Kirim data ke view
         $data = [
             'user' => $user,
             'setting' => $setting,
-            'wkwk' => $wkwk,
+            'erwin' => $erwin,
         ];
 
         echo view('header', $data);
@@ -286,6 +286,481 @@ public function user()
             echo view('footer');
     } else {
         return redirect()->route('login');
+    }
+}
+
+public function hapus_user($id)
+{
+    $this->logActivity('User Melakukan Hapus User');
+
+    // Hapus data activity berdasarkan id_activity
+    DB::table('tb_user')->where('id_user', $id)->delete();
+
+    return redirect()->route('user');
+}
+
+public function aksi_t_user(Request $request)
+{
+    $model = new M_resto();
+
+    $this->logActivity('User Melakukan Tambah User');
+
+    $request->validate([
+        'username' => 'required|string|max:255',
+        'email' => 'required|string|max:255',
+        'id_level'   => 'required|integer',
+    ]);
+        
+        $data = [
+            'username' => $request->input('username'),
+            'email' => $request->input('email'),
+            'id_level' => $request->input('id_level'),
+            'password' => md5('1'),           // Password otomatis "1" dengan MD5
+            'foto'     => 'avatar-3.png',      // Foto otomatis "avatar-3.png"
+        ];
+        
+        $model->tambah('tb_user', $data);
+        return redirect()->route('user')->with('success', 'Data user berhasil ditambahkan.');
+        // print_r($data);
+    }
+
+    public function aksi_e_user(Request $request)
+        {
+            $model = new M_resto();
+        
+            $this->logActivity('User Melakukan Edit User');
+        
+            // Validasi input
+            $request->validate([
+                'username' => 'required|string|max:255',
+                'email' => 'required|string|max:255',
+                'id_level'   => 'required|integer',
+            ]);
+        
+            // Ambil data dari form
+            $id_user = $request->input('id_user');
+            $username = $request->input('username');
+            $email = $request->input('email');
+            $id_level = $request->input('id_level');
+        
+            // Data yang akan diperbarui
+            $data = [
+                'username' => $username,
+                'email' => $email,
+                'id_level' => $id_level,
+            ];
+        
+            // Update data di database
+            $model->edit2('tb_user', $data, ['id_user' => $id_user]);
+        
+            // print_r($data);
+            // Redirect kembali ke halaman event dengan pesan sukses
+            return redirect()->route('user')->with('success', 'Data user berhasil diperbarui.');
+        }  
+        
+        public function member()
+{
+    if (session('id_level') == '1') {
+        $this->logActivity('User Membuka Menu Member');
+
+        $model = new M_resto();
+
+        // Ambil data user berdasarkan id_user dari session
+        $user = DB::table('tb_user')->where('id_user', session('id_user'))->first();
+
+        // Ambil data setting berdasarkan id_setting
+        $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
+
+        // Panggil model dan gunakan method tampil untuk mengambil data dari tb_event
+        $erwin = $model->tampil('tb_member');
+
+        // Kirim data ke view
+        $data = [
+            'user' => $user,
+            'setting' => $setting,
+            'erwin' => $erwin,
+        ];
+
+        echo view('header', $data);
+            echo view('menu', $data);
+            echo view('member', $data);
+            echo view('footer');
+    } else {
+        return redirect()->route('login');
+    }
+}
+
+public function aksi_t_member(Request $request)
+{
+    $model = new M_resto();
+
+    $this->logActivity('User Melakukan Tambah Member');
+
+    $request->validate([
+        'nama_member' => 'required|string|max:255',
+        'kode_member' => 'required|string|max:255',
+        'expired_member' => 'required|date',
+    ]);
+        
+        $data = [
+            'nama_member' => $request->input('nama_member'),
+            'kode_member' => $request->input('kode_member'),
+            'expired_member' => $request->input('expired_member'),
+        ];
+        
+        $model->tambah('tb_member', $data);
+        return redirect()->route('member')->with('success', 'Data member berhasil ditambahkan.');
+        // print_r($data);
+    }
+
+    public function aksi_e_member(Request $request)
+        {
+            $model = new M_resto();
+        
+            $this->logActivity('User Melakukan Edit Member');
+        
+            // Validasi input
+            $request->validate([
+                'nama_member' => 'required|string|max:255',
+                'kode_member' => 'required|string|max:255',
+                'expired_member' => 'required|date',
+            ]);
+        
+            // Ambil data dari form
+            $id_member = $request->input('id_member');
+            $nama_member = $request->input('nama_member');
+            $kode_member = $request->input('kode_member');
+            $expired_member = $request->input('expired_member');
+        
+            // Data yang akan diperbarui
+            $data = [
+                'nama_member' => $nama_member,
+                'kode_member' => $kode_member,
+                'expired_member' => $expired_member,
+            ];
+        
+            // Update data di database
+            $model->edit2('tb_member', $data, ['id_member' => $id_member]);
+        
+            // print_r($data);
+            // Redirect kembali ke halaman event dengan pesan sukses
+            return redirect()->route('member')->with('success', 'Data member berhasil diperbarui.');
+        }
+
+public function hapus_member($id)
+{
+    $this->logActivity('User Melakukan Hapus Member');
+
+    // Hapus data activity berdasarkan id_activity
+    DB::table('tb_member')->where('id_member', $id)->delete();
+
+    return redirect()->route('member');
+}
+
+public function voucher()
+{
+    if (session('id_level') == '1') {
+        $this->logActivity('User Membuka Menu Voucher');
+
+        $model = new M_resto();
+
+        // Ambil data user berdasarkan id_user dari session
+        $user = DB::table('tb_user')->where('id_user', session('id_user'))->first();
+
+        // Ambil data setting berdasarkan id_setting
+        $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
+
+        // Panggil model dan gunakan method tampil untuk mengambil data dari tb_event
+        $erwin = $model->tampil('tb_voucher');
+
+        // Kirim data ke view
+        $data = [
+            'user' => $user,
+            'setting' => $setting,
+            'erwin' => $erwin,
+        ];
+
+        echo view('header', $data);
+            echo view('menu', $data);
+            echo view('voucher', $data);
+            echo view('footer');
+    } else {
+        return redirect()->route('login');
+    }
+}
+
+public function aksi_t_voucher(Request $request)
+{
+    $model = new M_resto();
+
+    $this->logActivity('User Melakukan Tambah Voucher');
+
+    $request->validate([
+        'kode_voucher' => 'required|string|max:255',
+        'diskon' => 'required|string|max:255',
+        'voucher_expired' => 'required|string|max:255',
+    ]);
+        
+        $data = [
+            'kode_voucher' => $request->input('kode_voucher'),
+            'diskon' => $request->input('diskon'),
+            'voucher_expired' => $request->input('voucher_expired'),
+        ];
+        
+        $model->tambah('tb_voucher', $data);
+        return redirect()->route('voucher')->with('success', 'Data voucher berhasil ditambahkan.');
+        // print_r($data);
+    }
+
+    public function aksi_e_voucher(Request $request)
+        {
+            $model = new M_resto();
+        
+            $this->logActivity('User Melakukan Edit Voucher');
+        
+            // Validasi input
+            $request->validate([
+                'kode_voucher' => 'required|string|max:255',
+                'diskon' => 'required|string|max:255',
+                'voucher_expired' => 'required|string|max:255',
+            ]);
+        
+            // Ambil data dari form
+            $id_voucher = $request->input('id_voucher');
+            $kode_voucher = $request->input('kode_voucher');
+            $diskon = $request->input('diskon');
+            $voucher_expired = $request->input('voucher_expired');
+        
+            // Data yang akan diperbarui
+            $data = [
+                'kode_voucher' => $kode_voucher,
+                'diskon' => $diskon,
+                'voucher_expired' => $voucher_expired,
+            ];
+        
+            // Update data di database
+            $model->edit2('tb_voucher', $data, ['id_voucher' => $id_voucher]);
+        
+            // print_r($data);
+            // Redirect kembali ke halaman event dengan pesan sukses
+            return redirect()->route('voucher')->with('success', 'Data voucher berhasil diperbarui.');
+        }
+
+public function hapus_voucher($id)
+{
+    $this->logActivity('User Melakukan Hapus Voucher');
+
+    // Hapus data activity berdasarkan id_activity
+    DB::table('tb_voucher')->where('id_voucher', $id)->delete();
+
+    return redirect()->route('voucher');
+}
+
+public function menu_kfc()
+{
+    if (session('id_level') == '1') {
+        $this->logActivity('User Membuka Menu KFC');
+
+        $model = new M_resto();
+
+        // Ambil data user berdasarkan id_user dari session
+        $user = DB::table('tb_user')->where('id_user', session('id_user'))->first();
+
+        // Ambil data setting berdasarkan id_setting
+        $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
+
+        // Panggil model dan gunakan method tampil untuk mengambil data dari tb_event
+        $erwin = $model->tampil('tb_menu');
+
+        // Kirim data ke view
+        $data = [
+            'user' => $user,
+            'setting' => $setting,
+            'erwin' => $erwin,
+        ];
+
+        echo view('header', $data);
+            echo view('menu', $data);
+            echo view('menu_kfc', $data);
+            echo view('footer');
+    } else {
+        return redirect()->route('login');
+    }
+}
+
+public function aksi_t_menu(Request $request)
+{
+    $model = new M_resto();
+
+    $this->logActivity('User Melakukan Tambah Menu');
+
+    $request->validate([
+        'nama_menu' => 'required|string|max:255',
+        'harga' => 'required|string|max:255',
+        'deskripsi' => 'required|string|max:255',
+        'kategori' => 'required|in:Makanan,Minuman,Dessert,Paket',
+    ]);
+        
+        $data = [
+            'nama_menu' => $request->input('nama_menu'),
+            'harga' => $request->input('harga'),
+            'deskripsi' => $request->input('deskripsi'),
+            'kategori' => $request->input('kategori'),
+        ];
+        
+        $model->tambah('tb_menu', $data);
+        return redirect()->route('menu_kfc')->with('success', 'Data menu berhasil ditambahkan.');
+        // print_r($data);
+    }
+
+    public function aksi_e_menu(Request $request)
+        {
+            $model = new M_resto();
+        
+            $this->logActivity('User Melakukan Edit Menu');
+        
+            // Validasi input
+            $request->validate([
+                'nama_menu' => 'required|string|max:255',
+                'harga' => 'required|string|max:255',
+                'deskripsi' => 'required|string|max:255',
+                'kategori' => 'required|in:Makanan,Minuman,Dessert,Paket',
+            ]);
+        
+            // Ambil data dari form
+            $id_menu = $request->input('id_menu');
+            $nama_menu = $request->input('nama_menu');
+            $harga = $request->input('harga');
+            $deskripsi = $request->input('deskripsi');
+            $kategori = $request->input('kategori');
+        
+            // Data yang akan diperbarui
+            $data = [
+                'nama_menu' => $nama_menu,
+                'harga' => $harga,
+                'deskripsi' => $deskripsi,
+                'kategori' => $kategori,
+            ];
+        
+            // Update data di database
+            $model->edit2('tb_menu', $data, ['id_menu' => $id_menu]);
+        
+            // print_r($data);
+            // Redirect kembali ke halaman event dengan pesan sukses
+            return redirect()->route('menu_kfc')->with('success', 'Data menu berhasil diperbarui.');
+        }
+
+public function hapus_menu_kfc($id)
+{
+    $this->logActivity('User Melakukan Hapus Menu');
+
+    // Hapus data activity berdasarkan id_activity
+    DB::table('tb_menu')->where('id_menu', $id)->delete();
+
+    return redirect()->route('menu_kfc');
+}
+
+public function kasir()
+{
+    if (session('id_level') == '1') {
+        $this->logActivity('User Membuka Menu Kasir');
+
+        $model = new M_resto();
+
+        // Ambil data user berdasarkan id_user dari session
+        $user = DB::table('tb_user')->where('id_user', session('id_user'))->first();
+
+        // Ambil data setting berdasarkan id_setting
+        $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
+
+        // Panggil model dan gunakan method tampil untuk mengambil data dari tb_event
+        $menu = $model->tampil('tb_menu');
+
+        // Kirim data ke view
+        $data = [
+            'user' => $user,
+            'setting' => $setting,
+            'menu' => $menu,
+        ];
+
+        echo view('header', $data);
+            echo view('menu', $data);
+            echo view('kasir', $data);
+            echo view('footer');
+    } else {
+        return redirect()->route('login');
+    }
+}
+
+// public function cekVoucher(Request $request)
+// {
+//     // Ambil kode voucher dari request POST
+//     $kodeVoucher = $request->input('kode_voucher');
+    
+//     // Validasi input, pastikan kode voucher tidak kosong
+//     if (empty($kodeVoucher)) {
+//         return response()->json([
+//             'status' => 'invalid',
+//             'message' => 'Kode voucher tidak boleh kosong',
+//         ]);
+//     }
+
+//     // Cek voucher pada database
+//     $voucherModel = new M_resto();
+//         $voucher = $voucherModel->where('kode_voucher', $kodeVoucher)
+//                                 ->where('voucher_expired >=', date('Y-m-d'))
+//                                 ->first();
+
+
+//     // $voucher = Voucher::where('kode_voucher', $kodeVoucher)
+//     //                   ->where('voucher_expired', '>=', now()) // Pastikan voucher belum expired
+//     //                   ->first();
+
+//     // Jika voucher ditemukan
+//     if ($voucher) {
+//         return response()->json([
+//             'status' => 'valid',
+//             'diskon' => $voucher->diskon, // Asumsi diskon adalah dalam bentuk persen
+//         ]);
+//     } else {
+//         return response()->json([
+//             'status' => 'invalid',
+//             'message' => 'Voucher tidak valid atau telah expired',
+//         ]);
+//     }
+// }
+
+public function cekVoucher(Request $request)
+{
+    // Ambil kode voucher dari request POST
+    $kodeVoucher = $request->input('kode_voucher');
+    
+    // Validasi input, pastikan kode voucher tidak kosong
+    if (empty($kodeVoucher)) {
+        return response()->json([
+            'status' => 'invalid',
+            'message' => 'Kode voucher tidak boleh kosong',
+        ]);
+    }
+
+    // Cek voucher pada database
+    $voucherModel = new M_resto();
+    $voucher = $voucherModel->where('kode_voucher', $kodeVoucher)
+                        ->where('voucher_expired', '>=', date('Y-m-d'))
+                        ->first();
+dd($voucher);
+
+    // Jika voucher ditemukan
+    if ($voucher) {
+        return response()->json([
+            'status' => 'valid',
+            'diskon' => $voucher->diskon, // Asumsi diskon dalam bentuk persen
+        ]);
+    } else {
+        return response()->json([
+            'status' => 'invalid',
+            'message' => 'Voucher tidak valid atau telah expired',
+        ]);
     }
 }
     }

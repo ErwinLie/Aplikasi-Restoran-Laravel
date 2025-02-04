@@ -7,6 +7,22 @@ use Illuminate\Support\Facades\DB;
 
 class M_resto extends Model
 {
+
+    // Menentukan nama tabel
+    protected $table = 'tb_resto'; // Ganti dengan nama tabel yang sesuai
+
+    // Menentukan primary key tabel
+    protected $primaryKey = 'id_resto'; // Ganti dengan nama primary key yang sesuai
+
+    // Kolom yang bisa diisi (mass assignable)
+    protected $fillable = ['kode_resto', 'nama_resto', 'alamat_resto']; // Ganti dengan kolom yang sesuai
+
+    // Menentukan tipe data untuk beberapa kolom
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function getById($id)
 {
     return User::find($id);
