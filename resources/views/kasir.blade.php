@@ -14,74 +14,96 @@
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <div class="row">
-            <!-- Panel Menu Kiri -->
-            <div class="col-md-6">
-                <h4>Menu Makanan</h4>
-                <div class="row">
-                    <?php foreach ($menu as $item): ?>
-                    <div class="col-md-6 mb-3">
-                        <div class="card menu-card" data-id="<?= $item->id_menu ?>" data-nama="<?= $item->nama_menu ?>" data-harga="<?= $item->harga ?>">
-                            <div class="card-body">
-                                <h5><?= $item->nama_menu ?></h5>
-                                <p class="text-muted"><?= $item->deskripsi ?></p>
-                                <h6>Rp <?= number_format($item->harga, 0, ',', '.') ?></h6>
-                                <button class="btn btn-primary btn-sm btn-tambah">Tambah</button>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
+
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a href="{{ url('home/dashboard') }}" class="btn btn-icon">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
             </div>
-
-            <!-- Panel Daftar Pesanan Kanan -->
-            <div class="col-md-6">
-                <h4>Daftar Pesanan</h4>
-                <table class="table table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Menu</th>
-                            <th>Jumlah</th>
-                            <th>Subtotal</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="order-list"></tbody>
-                </table>
-
-                <!-- Input untuk Kode Membership dan Kode Voucher -->
-                <div class="mt-3">
-                    <div class="form-group">
-                        <label for="kode-membership">Kode Membership</label>
-                        <input type="text" class="form-control" id="kode-membership" placeholder="Masukkan Kode Membership">
-                    </div>
-                    <div class="form-group">
-                        <label for="kode-voucher">Kode Voucher</label>
-                        <input type="text" class="form-control" id="kode-voucher" placeholder="Masukkan Kode Voucher">
-                    </div>
+            <h1>Data Menu</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active">
+                    <a href="{{ url('home/dashboard') }}">Dashboard</a>
                 </div>
-
-                <h5 class="mt-2">Diskon: <span id="diskon-harga">Rp 0</span></h5>
-
-                <!-- Total Harga -->
-                <h5 class="mt-3">Total: <span id="total-harga">Rp 0</span></h5>
-
-                <!-- Input Harga Pembayaran -->
-<div class="form-group mt-3">
-    <label for="input-harga">Jumlah Pembayaran</label>
-    <input type="number" class="form-control" id="input-harga" placeholder="Masukkan jumlah uang">
-</div>
-
-<!-- Kembalian -->
-<h5 class="mt-2">Kembalian: <span id="kembalian-harga">Rp 0</span></h5>
-
-                <!-- Tombol Bayar -->
-                <button class="btn btn-success mt-2" id="btn-bayar">Bayar</button>
+                <div class="breadcrumb-item active">
+                    <a href="{{ url('home/menu') }}">Data Menu</a>
+                </div>
             </div>
         </div>
-    </div>
+
+        <div class="container mt-4">
+            <div class="row">
+                <!-- Panel Menu Kiri -->
+                <div class="col-md-6">
+                    <h4>Menu</h4>
+                    <div class="row">
+                        <?php foreach ($menu as $item): ?>
+                        <div class="col-md-6 mb-3">
+                            <div class="card menu-card" data-id="<?= $item->id_menu ?>" data-nama="<?= $item->nama_menu ?>" data-harga="<?= $item->harga ?>">
+                                <div class="card-body">
+                                    <h5><?= $item->nama_menu ?></h5>
+                                    <p class="text-muted"><?= $item->deskripsi ?></p>
+                                    <h6>Rp <?= number_format($item->harga, 0, ',', '.') ?></h6>
+                                    <button class="btn btn-primary btn-sm btn-tambah">Tambah</button>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <!-- Panel Daftar Pesanan Kanan -->
+                <div class="col-md-6">
+                    <h4>Daftar Pesanan</h4>
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Menu</th>
+                                <th>Jumlah</th>
+                                <th>Subtotal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="order-list"></tbody>
+                    </table>
+
+                    <!-- Input untuk Kode Membership dan Kode Voucher -->
+                    <div class="mt-3">
+                        <div class="form-group">
+                            <label for="kode-membership">Kode Membership</label>
+                            <input type="text" class="form-control" id="kode-membership" placeholder="Masukkan Kode Membership">
+                        </div>
+                        <div class="form-group">
+                            <label for="kode-voucher">Kode Voucher</label>
+                            <input type="text" class="form-control" id="kode-voucher" placeholder="Masukkan Kode Voucher">
+                        </div>
+                    </div>
+
+                    <h5 class="mt-2">Diskon: <span id="diskon-harga">Rp 0</span></h5>
+
+                    <!-- Total Harga -->
+                    <h5 class="mt-3">Total: <span id="total-harga">Rp 0</span></h5>
+
+                    <!-- Input Harga Pembayaran -->
+                    <div class="form-group mt-3">
+                        <label for="input-harga">Jumlah Pembayaran</label>
+                        <input type="number" class="form-control" id="input-harga" placeholder="Masukkan jumlah uang">
+                    </div>
+
+                    <!-- Kembalian -->
+                    <h5 class="mt-2">Kembalian: <span id="kembalian-harga">Rp 0</span></h5>
+
+                    <!-- Tombol Bayar -->
+                    <button class="btn btn-success mt-2" id="btn-bayar">Bayar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 
     <script>
 
@@ -89,17 +111,44 @@ $(document).on('input', '#input-harga', function() {
     hitungKembalian();
 });
 
-$(document).on('click', '#btn-bayar', function() {
+$('#btn-bayar').on('click', function () {
     let bayar = parseInt($('#input-harga').val());
-    let total = parseInt($('#total-harga').text().replace(/\D/g, ''));
+    let total = totalHarga; // Total sebelum diskon
+    let totalAkhir = parseInt($('#total-harga').text().replace(/\D/g, '')); // Total setelah diskon
+    let kembalian = bayar - totalAkhir;
 
-    if (isNaN(bayar) || bayar < total) {
+    if (isNaN(bayar) || bayar < totalAkhir) {
         alert('Jumlah pembayaran tidak cukup!');
         return;
     }
 
-    hitungKembalian();
-    alert('Pembayaran berhasil!');
+    let menuPesanan = daftarPesanan.map(item => ({
+        nama: item.nama,
+        harga: item.harga
+    }));
+
+    $.ajax({
+        url: "{{ url('aksi_t_transaksi') }}",
+        method: "POST",
+        data: {
+            kode_membership: $('#kode-membership').val(),
+            kode_voucher: $('#kode-voucher').val(),
+            diskon: diskonMembership + diskonVoucher,
+            total: total, // Total harga sebelum diskon
+            total_akhir: totalAkhir, // Total harga setelah diskon
+            bayar: bayar,
+            kembalian: kembalian,
+            menu: menuPesanan,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            alert(response.message);
+            location.reload();
+        },
+        error: function () {
+            alert('Gagal menyimpan transaksi');
+        }
+    });
 });
 
 function hitungKembalian() {

@@ -735,5 +735,128 @@ public function cekVoucher(Request $request)
     ]);
 }
 
+public function aksi_t_transaksi(Request $request)
+{
+    $model = new M_resto();
 
+    // Ambil data dari request
+    $kodeMember = $request->kode_membership;
+    $kodeVoucher = $request->kode_voucher;
+    $diskon = $request->diskon;
+    $total = $request->total;
+    $bayar = $request->bayar;
+    $kembalian = $request->kembalian;
+    $menuList = $request->menu; // Array menu yang dipilih
+
+    // Generate kode transaksi unik
+    $kodeTransaksi = 'TRX' . time();
+
+    // Simpan transaksi untuk setiap menu
+    foreach ($menuList as $menu) {
+        DB::table('tb_transaksi')->insert([
+            'kode_member'   => $kodeMember,
+            'kode_voucher'  => $kodeVoucher,
+            'nama_menu'     => $menu['nama'],
+            'kode_transaksi'=> $kodeTransaksi,
+            'tanggal'       => Carbon::now(),
+            'total'         => $total,
+            'diskon'        => $diskon,
+            'total_akhir'   => $total - $diskon,
+            'bayar'         => $bayar,
+            'kembalian'     => $kembalian,
+        ]);
+    }
+
+    return response()->json(['status' => 'success', 'message' => 'Transaksi berhasil disimpan']);
+}
+
+public function transaksi()
+{
+    if (session('id_level') == '1') {
+        $this->logActivity('User Membuka Transaksi');
+
+        $model = new M_resto();
+
+        // Ambil data user berdasarkan id_user dari session
+        $user = DB::table('tb_user')->where('id_user', session('id_user'))->first();
+
+        // Ambil data setting berdasarkan id_setting
+        $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
+
+        // Panggil model dan gunakan method tampil untuk mengambil data dari tb_event
+        $transaksi = $model->tampil('tb_transaksi');
+
+        // Kirim data ke view
+        $data = [
+            'user' => $user,
+            'setting' => $setting,
+            'transaksi' => $transaksi,
+        ];
+
+        echo view('header', $data);
+            echo view('menu', $data);
+            echo view('transaksi', $data);
+            echo view('footer');
+    } else {
+        return redirect()->route('login');
+    }
+}
+
+// public function filterTransaksi(Request $request)
+// {
+//     if (session('id_level') == '1') {
+//         $this->logActivity('User Melakukan Filter Transaksi');
+
+//         $user = DB::table('tb_user')->where('id_user', session('id_user'))->first();
+//         $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
+
+//         $start_date = $request->input('start_date');
+//         $end_date = $request->input('end_date');
+
+//         // Gunakan whereRaw untuk membandingkan hanya bagian tanggalnya saja
+//         $transaksi = DB::table('tb_transaksi')
+//             ->whereRaw("DATE(tanggal) >= ?", [$start_date])  // Membandingkan hanya tanggalnya
+//             ->whereRaw("DATE(tanggal) <= ?", [$end_date])    // Membandingkan hanya tanggalnya
+//             ->orderBy('tanggal', 'desc')
+//             ->get();
+
+//         return view('transaksi', [
+//             'user' => $user,
+//             'setting' => $setting,
+//             'transaksi' => $transaksi,
+//         ]);
+//     } else {
+//         return redirect()->route('login');
+//     }
+// }
+
+public function filterTransaksi(Request $request)
+{
+    if (session('id_level') == '1') {
+        $this->logActivity('User Melakukan Filter Transaksi');
+
+        $user = DB::table('tb_user')->where('id_user', session('id_user'))->first();
+        $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
+
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+
+        // Pastikan format tanggal sesuai dengan format yang diterima oleh database
+        // Misalnya format tanggal yang diterima adalah 'YYYY-MM-DD'
+        // Cek dan ubah format tanggal jika perlu
+
+        // Menggunakan whereRaw untuk membandingkan hanya bagian tanggalnya saja
+        $transaksi = DB::table('tb_transaksi')
+            ->whereRaw("DATE(tanggal) >= ?", [$start_date])  // Membandingkan hanya tanggalnya
+            ->whereRaw("DATE(tanggal) <= ?", [$end_date])    // Membandingkan hanya tanggalnya
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+        return response()->json([
+            'transaksi' => $transaksi
+        ]);
+    } else {
+        return redirect()->route('login');
+    }
+}
     }

@@ -54,6 +54,10 @@ Route::get('home/hapus_menu_kfc/{id}', [Home::class, 'hapus_menu_kfc'])->name('h
 
 Route::get('home/kasir',  [Home::class, 'kasir'])->name('kasir');
 
+Route::get('home/transaksi',  [Home::class, 'transaksi'])->name('transaksi');
+
+Route::get('/filter_transaksi', [Home::class, 'filterTransaksi'])->name('filter_transaksi');
+
 //aksi
 
 Route::post('home/aksi_login', [Home::class, 'aksi_login'])->name('aksi_login');
@@ -87,3 +91,5 @@ Route::post('/cekMembership', [Home::class, 'cekMembership']);
 Route::post('/cekVoucher', [Home::class, 'cekVoucher']);
 
 Route::post('/simpanTransaksi', [Home::class, 'simpanTransaksi']);
+
+Route::post('/aksi_t_transaksi', [Home::class, 'aksi_t_transaksi']);
