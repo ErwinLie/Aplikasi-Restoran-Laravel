@@ -91,7 +91,7 @@
                     <!-- Input Harga Pembayaran -->
                     <div class="form-group mt-3">
                         <label for="input-harga">Jumlah Pembayaran</label>
-                        <input type="number" class="form-control" id="input-harga" placeholder="Masukkan jumlah uang">
+                        <input type="text" class="form-control" id="input-harga" placeholder="Masukkan jumlah uang">
                     </div>
 
                     <!-- Kembalian -->
@@ -113,8 +113,9 @@ $(document).on('input', '#input-harga', function() {
 
 $('#btn-bayar').on('click', function () {
     let bayar = parseInt($('#input-harga').val());
+    let totalAkhir = parseInt($('#total-harga').text().replace(/[^\d]/g, '')); // Ambil nilai dari #total-harga
     let total = totalHarga; // Total sebelum diskon
-    let totalAkhir = parseInt($('#total-harga').text().replace(/\D/g, '')); // Total setelah diskon
+    let diskon = parseInt($('#diskon-harga').text().replace(/[^\d]/g, '')) || 0; // Ambil nilai dari #diskon-harga
     let kembalian = bayar - totalAkhir;
 
     if (isNaN(bayar) || bayar < totalAkhir) {
@@ -123,9 +124,10 @@ $('#btn-bayar').on('click', function () {
     }
 
     let menuPesanan = daftarPesanan.map(item => ({
-        nama: item.nama,
-        harga: item.harga
-    }));
+    nama: item.nama,
+    harga: item.harga,
+    jumlah: item.jumlah // Tambahkan jumlah
+}));
 
     $.ajax({
         url: "{{ url('aksi_t_transaksi') }}",
@@ -133,7 +135,7 @@ $('#btn-bayar').on('click', function () {
         data: {
             kode_membership: $('#kode-membership').val(),
             kode_voucher: $('#kode-voucher').val(),
-            diskon: diskonMembership + diskonVoucher,
+            diskon: diskon, // Menggunakan nilai dari #diskon-harga
             total: total, // Total harga sebelum diskon
             total_akhir: totalAkhir, // Total harga setelah diskon
             bayar: bayar,

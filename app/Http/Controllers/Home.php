@@ -744,6 +744,7 @@ public function aksi_t_transaksi(Request $request)
     $kodeVoucher = $request->kode_voucher;
     $diskon = $request->diskon;
     $total = $request->total;
+    $totalakhir = $request->total_akhir;
     $bayar = $request->bayar;
     $kembalian = $request->kembalian;
     $menuList = $request->menu; // Array menu yang dipilih
@@ -759,9 +760,10 @@ public function aksi_t_transaksi(Request $request)
             'nama_menu'     => $menu['nama'],
             'kode_transaksi'=> $kodeTransaksi,
             'tanggal'       => Carbon::now(),
+            'jumlah'        => $menu['jumlah'], // Menambahkan jumlah
             'total'         => $total,
             'diskon'        => $diskon,
-            'total_akhir'   => $total - $diskon,
+            'total_akhir'   => $totalakhir,
             'bayar'         => $bayar,
             'kembalian'     => $kembalian,
         ]);
@@ -769,6 +771,39 @@ public function aksi_t_transaksi(Request $request)
 
     return response()->json(['status' => 'success', 'message' => 'Transaksi berhasil disimpan']);
 }
+
+
+// public function transaksi()
+// {
+//     if (session('id_level') == '1') {
+//         $this->logActivity('User Membuka Transaksi');
+
+//         $model = new M_resto();
+
+//         // Ambil data user berdasarkan id_user dari session
+//         $user = DB::table('tb_user')->where('id_user', session('id_user'))->first();
+
+//         // Ambil data setting berdasarkan id_setting
+//         $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
+
+//         // Panggil model dan gunakan method tampil untuk mengambil data dari tb_event
+//         $transaksi = $model->tampil('tb_transaksi');
+
+//         // Kirim data ke view
+//         $data = [
+//             'user' => $user,
+//             'setting' => $setting,
+//             'transaksi' => $transaksi,
+//         ];
+
+//         echo view('header', $data);
+//             echo view('menu', $data);
+//             echo view('transaksi', $data);
+//             echo view('footer');
+//     } else {
+//         return redirect()->route('login');
+//     }
+// }
 
 public function transaksi()
 {
@@ -783,8 +818,12 @@ public function transaksi()
         // Ambil data setting berdasarkan id_setting
         $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
 
-        // Panggil model dan gunakan method tampil untuk mengambil data dari tb_event
-        $transaksi = $model->tampil('tb_transaksi');
+        // Ambil hanya satu data per kode_transaksi
+        $transaksi = DB::table('tb_transaksi')
+    ->select('kode_transaksi', DB::raw('MAX(tanggal) as tanggal')) // Get the latest tanggal for each kode_transaksi
+    ->groupBy('kode_transaksi')
+    ->orderBy('tanggal', 'DESC')
+    ->get();
 
         // Kirim data ke view
         $data = [
@@ -794,9 +833,9 @@ public function transaksi()
         ];
 
         echo view('header', $data);
-            echo view('menu', $data);
-            echo view('transaksi', $data);
-            echo view('footer');
+        echo view('menu', $data);
+        echo view('transaksi', $data);
+        echo view('footer');
     } else {
         return redirect()->route('login');
     }
@@ -859,4 +898,21 @@ public function filterTransaksi(Request $request)
         return redirect()->route('login');
     }
 }
+
+public function getDetailTransaksi(Request $request)
+{
+    $kode_transaksi = $request->kode_transaksi;
+
+    $transaksi = DB::table('tb_transaksi')
+        ->where('kode_transaksi', $kode_transaksi)
+        ->select('kode_transaksi', 'tanggal', 'kode_member', 'kode_voucher', 'jumlah', 'menu', 'total', 'diskon', 'total_akhir', 'bayar', 'kembalian')
+        ->first();
+
+    if ($transaksi) {
+        return response()->json(['success' => true, 'data' => $transaksi]);
+    } else {
+        return response()->json(['success' => false, 'message' => 'Data tidak ditemukan']);
+    }
+}
+
     }
