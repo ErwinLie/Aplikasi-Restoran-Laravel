@@ -62,6 +62,11 @@ Route::get('/get_detail_transaksi', [Home::class, 'get_detail_transaksi'])->name
 
 Route::get('home/laporan',  [Home::class, 'laporan'])->name('laporan');
 
+// Route::get('home/print_nota', [Home::class, 'print_nota'])->name('print_nota');
+
+Route::get('/cetak_nota/{kode_transaksi}', [Home::class, 'cetak_nota'])->name('cetak_nota');
+
+
 //aksi
 
 Route::post('home/aksi_login', [Home::class, 'aksi_login'])->name('aksi_login');

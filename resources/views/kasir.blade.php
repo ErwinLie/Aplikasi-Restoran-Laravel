@@ -113,9 +113,9 @@ $(document).on('input', '#input-harga', function() {
 
 $('#btn-bayar').on('click', function () {
     let bayar = parseInt($('#input-harga').val());
-    let totalAkhir = parseInt($('#total-harga').text().replace(/[^\d]/g, '')); // Ambil nilai dari #total-harga
-    let total = totalHarga; // Total sebelum diskon
-    let diskon = parseInt($('#diskon-harga').text().replace(/[^\d]/g, '')) || 0; // Ambil nilai dari #diskon-harga
+    let totalAkhir = parseInt($('#total-harga').text().replace(/[^\d]/g, ''));
+    let total = totalHarga;
+    let diskon = parseInt($('#diskon-harga').text().replace(/[^\d]/g, '')) || 0;
     let kembalian = bayar - totalAkhir;
 
     if (isNaN(bayar) || bayar < totalAkhir) {
@@ -124,10 +124,10 @@ $('#btn-bayar').on('click', function () {
     }
 
     let menuPesanan = daftarPesanan.map(item => ({
-    nama: item.nama,
-    harga: item.harga,
-    jumlah: item.jumlah // Tambahkan jumlah
-}));
+        nama: item.nama,
+        harga: item.harga,
+        jumlah: item.jumlah
+    }));
 
     $.ajax({
         url: "{{ url('aksi_t_transaksi') }}",
@@ -135,23 +135,32 @@ $('#btn-bayar').on('click', function () {
         data: {
             kode_membership: $('#kode-membership').val(),
             kode_voucher: $('#kode-voucher').val(),
-            diskon: diskon, // Menggunakan nilai dari #diskon-harga
-            total: total, // Total harga sebelum diskon
-            total_akhir: totalAkhir, // Total harga setelah diskon
+            diskon: diskon,
+            total: total,
+            total_akhir: totalAkhir,
             bayar: bayar,
             kembalian: kembalian,
             menu: menuPesanan,
             _token: $('meta[name="csrf-token"]').attr('content')
         },
         success: function (response) {
-            alert(response.message);
-            location.reload();
+            if (response.status === 'success') {
+                alert('Transaksi berhasil!');
+                cetakNota(response.kode_transaksi); // Panggil fungsi cetak nota
+            } else {
+                alert('Gagal menyimpan transaksi');
+            }
         },
         error: function () {
             alert('Gagal menyimpan transaksi');
         }
     });
 });
+
+function cetakNota(kodeTransaksi) {
+    let printWindow = window.open("{{ url('cetak_nota') }}/" + kodeTransaksi, '_blank');
+    printWindow.focus();
+}
 
 function hitungKembalian() {
     let bayar = parseInt($('#input-harga').val());

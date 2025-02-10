@@ -769,7 +769,7 @@ public function aksi_t_transaksi(Request $request)
         ]);
     }
 
-    return response()->json(['status' => 'success', 'message' => 'Transaksi berhasil disimpan']);
+    return response()->json(['status' => 'success', 'message' => 'Transaksi berhasil disimpan', 'kode_transaksi' => $kodeTransaksi]);
 }
 
 
@@ -976,5 +976,19 @@ public function laporan()
         return redirect()->route('login');
     }
 }
+
+public function cetak_nota($kode_transaksi)
+{
+    $transaksi = DB::table('tb_transaksi')
+        ->where('kode_transaksi', $kode_transaksi)
+        ->get();
+
+    if ($transaksi->isEmpty()) {
+        return abort(404, 'Data transaksi tidak ditemukan');
+    }
+
+    return view('cetak_nota', compact('transaksi'));
+}
+
 
     }
