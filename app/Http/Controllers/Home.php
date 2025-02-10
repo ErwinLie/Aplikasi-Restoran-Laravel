@@ -899,19 +899,81 @@ public function filterTransaksi(Request $request)
     }
 }
 
-public function getDetailTransaksi(Request $request)
+// public function get_detail_transaksi(Request $request)
+// {
+//     $kode_transaksi = $request->kode_transaksi;
+
+//     $transaksi = DB::table('tb_transaksi')
+//         ->where('kode_transaksi', $kode_transaksi)
+//         ->select('kode_transaksi', 'tanggal', 'kode_member', 'kode_voucher', 'jumlah', 'nama_menu', 'total', 'diskon', 'total_akhir', 'bayar', 'kembalian')
+//         ->first();
+
+//     if ($transaksi) {
+//         return response()->json(['success' => true, 'data' => $transaksi]);
+//     } else {
+//         return response()->json(['success' => false, 'message' => 'Data tidak ditemukan']);
+//     }
+// }
+
+public function get_detail_transaksi(Request $request)
 {
     $kode_transaksi = $request->kode_transaksi;
 
+    // Ambil semua data transaksi dengan kode transaksi yang sama
     $transaksi = DB::table('tb_transaksi')
         ->where('kode_transaksi', $kode_transaksi)
-        ->select('kode_transaksi', 'tanggal', 'kode_member', 'kode_voucher', 'jumlah', 'menu', 'total', 'diskon', 'total_akhir', 'bayar', 'kembalian')
+        ->select(
+            'kode_transaksi',
+            'tanggal',
+            'kode_member',
+            'kode_voucher',
+            DB::raw("GROUP_CONCAT(jumlah ORDER BY id_transaksi SEPARATOR ', ') as jumlah"),
+            DB::raw("GROUP_CONCAT(nama_menu ORDER BY id_transaksi SEPARATOR ', ') as nama_menu"),
+            'total',
+            'diskon',
+            'total_akhir',
+            'bayar',
+            'kembalian'
+        )
+        ->groupBy('kode_transaksi', 'tanggal', 'kode_member', 'kode_voucher', 'total', 'diskon', 'total_akhir', 'bayar', 'kembalian')
         ->first();
 
     if ($transaksi) {
         return response()->json(['success' => true, 'data' => $transaksi]);
     } else {
         return response()->json(['success' => false, 'message' => 'Data tidak ditemukan']);
+    }
+}
+
+public function laporan()
+{
+    if (session('id_level') == '1') {
+        $this->logActivity('User Membuka Menu Laporan');
+
+        $model = new M_resto();
+
+        // Ambil data user berdasarkan id_user dari session
+        $user = DB::table('tb_user')->where('id_user', session('id_user'))->first();
+
+        // Ambil data setting berdasarkan id_setting
+        $setting = DB::table('tb_setting')->where('id_setting', 1)->first();
+
+        // Panggil model dan gunakan method tampil untuk mengambil data dari tb_event
+        // $menu = $model->tampil('tb_menu');
+
+        // Kirim data ke view
+        $data = [
+            'user' => $user,
+            'setting' => $setting,
+            // 'menu' => $menu,
+        ];
+
+        echo view('header', $data);
+            echo view('menu', $data);
+            echo view('laporan', $data);
+            echo view('footer');
+    } else {
+        return redirect()->route('login');
     }
 }
 

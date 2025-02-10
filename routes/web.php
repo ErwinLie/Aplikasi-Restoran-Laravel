@@ -60,6 +60,8 @@ Route::get('/filter_transaksi', [Home::class, 'filterTransaksi'])->name('filter_
 
 Route::get('/get_detail_transaksi', [Home::class, 'get_detail_transaksi'])->name('get_detail_transaksi');
 
+Route::get('home/laporan',  [Home::class, 'laporan'])->name('laporan');
+
 //aksi
 
 Route::post('home/aksi_login', [Home::class, 'aksi_login'])->name('aksi_login');

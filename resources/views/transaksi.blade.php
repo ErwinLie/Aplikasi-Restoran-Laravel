@@ -81,8 +81,8 @@
                         <tr><th>Kode Transaksi</th><td id="modalKodeTransaksi"></td></tr>
                         <tr><th>Kode Member</th><td id="modalKodeMember"></td></tr>
                         <tr><th>Kode Voucher</th><td id="modalKodeVoucher"></td></tr>
-                        <tr><th>Jumlah</th><td id="modalJumlah"></td></tr>
-                        <tr><th>Menu</th><td id="modalMenu"></td></tr>
+                        <tr><th>Menu</th><td id="modalJumlah"></td></tr>
+                        <!-- <tr><th>Menu</th><td id="modalMenu"></td></tr> -->
                         <tr><th>Total</th><td id="modalTotal"></td></tr>
                         <tr><th>Diskon</th><td id="modalDiskon"></td></tr>
                         <tr><th>Total Akhir</th><td id="modalTotalAkhir"></td></tr>
@@ -186,35 +186,45 @@
 
         // Tampilkan modal dengan detail transaksi
         $(document).on('click', '.btn-detail', function () {
-            let kode_transaksi = $(this).data('id');
+    let kode_transaksi = $(this).data('id');
 
-            $.ajax({
-                url: "{{ route('get_detail_transaksi') }}",
-                type: "GET",
-                data: { kode_transaksi: kode_transaksi },
-                success: function (response) {
-                    if (response.success) {
-                        let transaksi = response.data;
+    $.ajax({
+        url: "{{ route('get_detail_transaksi') }}",
+        type: "GET",
+        data: { kode_transaksi: kode_transaksi },
+        success: function (response) {
+            if (response.success) {
+                let transaksi = response.data;
 
-                        $('#modalTanggal').text(transaksi.tanggal);
-                        $('#modalKodeTransaksi').text(transaksi.kode_transaksi);
-                        $('#modalKodeMember').text(transaksi.kode_member || '-');
-                        $('#modalKodeVoucher').text(transaksi.kode_voucher || '-');
-                        $('#modalJumlah').text(transaksi.jumlah);
-                        $('#modalMenu').text(transaksi.menu);
-                        $('#modalTotal').text('Rp ' + transaksi.total.toLocaleString());
-                        $('#modalDiskon').text('Rp ' + transaksi.diskon.toLocaleString());
-                        $('#modalTotalAkhir').text('Rp ' + transaksi.total_akhir.toLocaleString());
-                        $('#modalBayar').text('Rp ' + transaksi.bayar.toLocaleString());
-                        $('#modalKembalian').text('Rp ' + transaksi.kembalian.toLocaleString());
+                $('#modalTanggal').text(transaksi.tanggal);
+                $('#modalKodeTransaksi').text(transaksi.kode_transaksi);
+                $('#modalKodeMember').text(transaksi.kode_member || '-');
+                $('#modalKodeVoucher').text(transaksi.kode_voucher || '-');
 
-                        $('#detailTransaksiModal').modal('show');
-                    } else {
-                        alert('Data transaksi tidak ditemukan');
-                    }
+                // Menggabungkan jumlah dan menu
+                let jumlahArray = transaksi.jumlah.split(',');
+                let menuArray = transaksi.nama_menu.split(',');
+                let menuList = '';
+
+                for (let i = 0; i < jumlahArray.length; i++) {
+                    menuList += jumlahArray[i] + 'x ' + menuArray[i] + '<br>';
                 }
-            });
-        });
+
+                $('#modalJumlah').html(menuList); // Tampilkan hasil yang sudah digabung
+
+                $('#modalTotal').text('Rp ' + transaksi.total.toLocaleString());
+                $('#modalDiskon').text('Rp ' + transaksi.diskon.toLocaleString());
+                $('#modalTotalAkhir').text('Rp ' + transaksi.total_akhir.toLocaleString());
+                $('#modalBayar').text('Rp ' + transaksi.bayar.toLocaleString());
+                $('#modalKembalian').text('Rp ' + transaksi.kembalian.toLocaleString());
+
+                $('#detailTransaksiModal').modal('show');
+            } else {
+                alert('Data transaksi tidak ditemukan');
+            }
+        }
+    });
+});
     });
 </script>
 
